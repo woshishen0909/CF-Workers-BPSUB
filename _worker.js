@@ -11,8 +11,7 @@ export default {
             subConverter = subConverter.split("//")[1] || subConverter;
         }
         let subConfig = env.SUBCONFIG || 'https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Mini_MultiMode.ini';
-        const proxyIP = env.PROXYIP || null;
-        let ips = ['3Q.bestip-one.cf.090227.xyz#感谢白嫖哥t.me/bestip_one'];
+        let ips = ['3Q.bestip-one.cf.090227.xyz#加入我的频道t.me/CMLiussss解锁更多优选节点'];
         if (env.ADD) ips = await 整理成数组(env.ADD);
         let FileName = env.SUBNAME || 'BPSUB';
         let EndPS = env.PS || '';
@@ -40,7 +39,7 @@ export default {
             value: `${subProtocol}://${subConverter.toLowerCase()}`
         }, {
             label: '🔄 CM提供-负载均衡后端',
-            value: 'https://subapi.cmliussss.net'
+            value: 'https://subapi.090227.xyz'
         }, {
             label: '⚖️ Lfree提供-负载均衡后端',
             value: 'https://api.sub.zaoy.cn'
@@ -78,12 +77,14 @@ export default {
             const uuid = url.searchParams.get('uuid') || env.UUID;
             const uuid_json = await getLocalData(bphost, uuid);
             const xhttp = url.searchParams.get('xhttp') || false;
-            let 最终路径 = url.searchParams.has('proxyip') ? `/snippets/ip=${url.searchParams.get('proxyip')}` : (proxyIP && proxyIP.trim() !== '') ? `/snippets/ip=${encodeURIComponent(proxyIP)}` : `/snippets`;
+            const initialProxyIP = url.searchParams.has('proxyip') ? url.searchParams.get('proxyip') : env.PROXYIP || null;
+            const proxyIP = (initialProxyIP && initialProxyIP.includes('.william')) ? (await 解析William域名(initialProxyIP)) || initialProxyIP : initialProxyIP;
+            let 最终路径 = (proxyIP && proxyIP.trim?.() !== '') ? `/proxyip=${proxyIP}` : `/`;
             let socks5 = null;
             const 全局socks5 = (url.searchParams.has('global')) ? true : false;
             if (url.searchParams.has('socks5') && url.searchParams.get('socks5') != '') {
                 socks5 = url.searchParams.get('socks5');
-                最终路径 = 全局socks5 ? `/snippets/gs5=${socks5}` : `/snippets/s5=${socks5}`;
+                最终路径 = 全局socks5 ? `/socks5://${socks5}` : `/socks5=${socks5}`;
             } else if (url.searchParams.has('http') && url.searchParams.get('http') != '') {
                 socks5 = url.searchParams.get('http');
                 最终路径 = 全局socks5 ? `/http://${socks5}` : `/http=${socks5}`;
@@ -1983,19 +1984,13 @@ async function subHtml(request, hostLength = 0, FileName, subProtocol, subConver
                     <!-- 部署教程选项卡 -->
                     <div class="tabs-container">
                         <div class="tabs-header">
-                            <button class="tab-button active" onclick="switchTab('workers')" id="workers-tab">
-                                ⚡ CF Workers 部署
-                            </button>
-                            <button class="tab-button" onclick="switchTab('pages')" id="pages-tab">
-                                📄 CF Pages 部署
-                            </button>
-                            <button class="tab-button" onclick="switchTab('snippets')" id="snippets-tab">
+                            <button class="tab-button active" onclick="switchTab('snippets')" id="snippets-tab">
                                 📃 CF Snippets 部署
                             </button>
                         </div>
                         <div class="tab-content">
                             <!-- Workers 选项卡内容 -->
-                            <div class="tab-panel active" id="workers-panel">
+                            <div class="tab-panel" id="workers-panel">
                                 <p style="color: #e2e8f0; margin-bottom: 15px; line-height: 1.6;">
                                     1️⃣ 复制下方代码 → 2️⃣ 进入Cloudflare Workers → 3️⃣ 创建新Worker → 4️⃣ 粘贴代码并部署
                                 </p>
@@ -2069,7 +2064,7 @@ async function subHtml(request, hostLength = 0, FileName, subProtocol, subConver
                             </div>
                             
                             <!-- Snippets 选项卡内容 -->
-                            <div class="tab-panel" id="snippets-panel">
+                            <div class="tab-panel active" id="snippets-panel">
                                 <p style="color: #e2e8f0; margin-bottom: 15px; line-height: 1.6;">
                                     1️⃣ 进入 规则(Rules) > Snippets → 2️⃣ 创建片段 → 3️⃣ 粘贴下方代码并部署 <br>→ 4️⃣ 片段规则 主机名 > 等于 > 自定义域名 <br>→ 5️⃣ 创建新代理DNS记录 > CNAME > 自定义域 > <strong><span onclick="copyToClipboard('cf.090227.xyz')" style="cursor: pointer; color: #00ff9d; text-decoration: underline;">cf.090227.xyz</span></strong>
                                 </p>
@@ -2078,7 +2073,7 @@ async function subHtml(request, hostLength = 0, FileName, subProtocol, subConver
                                 <div style="margin-bottom: 20px;">
                                     <label for="snippetSourceSelect" style="display: block; margin-bottom: 12px; color: #e2e8f0; font-weight: 600;">选择源码版本：</label>
                                     <select id="snippetSourceSelect" onchange="changeSnippetSource()">
-                                        <option value="v" selected>🎯 白嫖哥源码</option>
+                                        <option value="v" selected>🎯 白嫖哥源码(@GoodLiux优化版)</option>
                                         <option value="t12">📘 天书12源码</option>
                                         <option value="t13">📗 天书13源码(不支持ed配置)</option>
                                         <option value="my">🔥 ymyuuu源码(支持xhttp协议)</option>
@@ -2356,7 +2351,6 @@ async function subHtml(request, hostLength = 0, FileName, subProtocol, subConver
 • scv：跳过TLS证书验证，适用于双向解析的免费域名
 • xhttp：使用XHTTP协议必须保证域名开启gRPC支持
 • trojan：使用trojan协议并开启验证UUID的话，要求在当前页面填写正确的UUID后再点击复制源码
-• 天书13：不支持ed参数配置
                         </div>
                     </div>
                 </div>
@@ -2405,9 +2399,12 @@ async function subHtml(request, hostLength = 0, FileName, subProtocol, subConver
         
         // 加载JSON配置
         async function loadJsonConfigs() {
+            // 添加时间戳参数避免浏览器缓存
+            const timestamp = Date.now();
+            
             try {
                 // 加载subapi.json
-                const subApiResponse = await fetch('/subapi.json');
+                const subApiResponse = await fetch('/subapi.json?t=' + timestamp);
                 if (subApiResponse.ok) {
                     subApiData = await subApiResponse.json();
                     populateSubApiSelect();
@@ -2422,7 +2419,7 @@ async function subHtml(request, hostLength = 0, FileName, subProtocol, subConver
             
             try {
                 // 加载subconfig.json
-                const subConfigResponse = await fetch('/subconfig.json');
+                const subConfigResponse = await fetch('/subconfig.json?t=' + timestamp);
                 if (subConfigResponse.ok) {
                     subConfigData = await subConfigResponse.json();
                     populateSubConfigSelect();
@@ -2713,9 +2710,8 @@ async function subHtml(request, hostLength = 0, FileName, subProtocol, subConver
         
         // 保存表单数据到localStorage
         function saveFormData() {
-            // 获取当前活跃的选项卡
-            const activeTab = document.querySelector('.tab-button.active');
-            const currentTab = activeTab ? activeTab.id.replace('-tab', '') : 'workers';
+            // 强制使用 snippets 选项卡（因为前端只保留了 Snippets 部署选项）
+            const currentTab = 'snippets';
             
             const formData = {
                 ips: document.getElementById('ips').value,
@@ -2803,11 +2799,9 @@ async function subHtml(request, hostLength = 0, FileName, subProtocol, subConver
                     }
                 }
                 
-                // 恢复选项卡状态
-                if (formData.activeTab) {
-                    console.log('恢复选项卡状态:', formData.activeTab);
-                    switchTab(formData.activeTab);
-                }
+                // 强制使用 snippets 选项卡（因为前端只保留了 Snippets 部署选项）
+                console.log('强制切换到 snippets 选项卡');
+                switchTab('snippets');
                 
                 // 设置全局Socks5选项
                 if (formData.globalSocks5 !== undefined) {
@@ -4073,10 +4067,8 @@ async function subHtml(request, hostLength = 0, FileName, subProtocol, subConver
             // 初始化ed选项可用性检查
             checkEdOptionAvailability();
             
-            // 初始化HTTP代理选项可用性检查
-            const activeTab = document.querySelector('.tab-button.active');
-            const currentTab = activeTab ? activeTab.id.replace('-tab', '') : 'workers';
-            checkHttpProxyAvailability(currentTab);
+            // 初始化HTTP代理选项可用性检查（强制使用 snippets）
+            checkHttpProxyAvailability('snippets');
             
             // 初始化复选框事件监听
             const globalSocks5Checkbox = document.getElementById('globalSocks5');
@@ -4183,4 +4175,47 @@ function encodeBase64(data) {
 
     const padding = 3 - (binary.length % 3 || 3);
     return base64.slice(0, base64.length - padding) + '=='.slice(0, padding);
+}
+
+async function 解析William域名(william) {
+    try {
+        const response = await fetch(`https://1.1.1.1/dns-query?name=${william}&type=TXT`, { headers: { 'Accept': 'application/dns-json' } });
+        if (!response.ok) return null;
+        const data = await response.json();
+        const txtRecords = (data.Answer || []).filter(record => record.type === 16).map(record => record.data);
+        if (txtRecords.length === 0) return null;
+        let txtData = txtRecords[0];
+        if (txtData.startsWith('"') && txtData.endsWith('"')) txtData = txtData.slice(1, -1);
+        const prefixes = txtData.replace(/\\010/g, ',').replace(/\n/g, ',').split(',').map(s => s.trim()).filter(Boolean);
+        if (prefixes.length === 0) return null;
+        const selectedIP = prefixes[Math.floor(Math.random() * prefixes.length)];
+        let 地址 = selectedIP, 端口 = 443;
+        if (selectedIP.includes('.tp')) {
+            const tpMatch = selectedIP.match(/\.tp(\d+)/);
+            if (tpMatch) 端口 = parseInt(tpMatch[1], 10);
+            return [地址, 端口];
+        }
+        if (selectedIP.includes(']:')) {
+            const parts = selectedIP.split(']:');
+            地址 = parts[0] + ']';
+            端口 = parseInt(parts[1], 10) || 端口;
+        } else if (selectedIP.includes(':') && !selectedIP.startsWith('[')) {
+            const colonIndex = selectedIP.lastIndexOf(':');
+            地址 = selectedIP.slice(0, colonIndex);
+            端口 = parseInt(selectedIP.slice(colonIndex + 1), 10) || 端口;
+        }
+        if (地址.includes(':')) {
+            return `${地址.replace(/^\[|]$/g, '').replace(/:/g, '-')}.tp${端口}.ip.090227.xyz`;
+        } else {
+            const parts = 地址.split('.').map(part => {
+                const hex = parseInt(part, 10).toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            });
+            const nip = parts.join('');
+            return `${nip}.tp${端口}.ip.090227.xyz`;
+        }
+    } catch (error) {
+        console.error('解析ProxyIP失败:', error);
+        return null;
+    }
 }
